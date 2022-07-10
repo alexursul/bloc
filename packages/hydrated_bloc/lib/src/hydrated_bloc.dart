@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 
 const _asyncRunZoned = runZoned;
@@ -196,8 +197,14 @@ mixin HydratedMixin<State> on BlocBase<State> {
 
   Storage get _storage {
     final storage = _overrides?.storage;
-    if (storage == null) throw const StorageNotFound();
-    if (storage is _DefaultStorage) throw const StorageNotFound();
+    if (storage == null) {
+      if (kDebugMode) {
+        return TestStorage();
+      }
+
+      throw const StorageNotFound();
+    }
+    if (storage is TestStorage && !kDebugMode) throw const StorageNotFound();
     return storage;
   }
 
@@ -523,11 +530,4 @@ class _Traversed {
   final dynamic value;
 }
 
-late final _defaultStorage = _DefaultStorage();
-
-class _DefaultStorage implements Storage {
-  @override
-  dynamic noSuchMethod(Invocation invocation) {
-    return super.noSuchMethod(invocation);
-  }
-}
+late final _defaultStorage = TestStorage();

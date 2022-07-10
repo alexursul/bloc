@@ -162,3 +162,27 @@ class HydratedStorage implements Storage {
     }
   }
 }
+
+class TestStorage implements Storage {
+  final Map<String, dynamic> _map = <String, dynamic>{};
+
+  @override
+  Future<void> clear() async {
+    _map.clear();
+  }
+
+  @override
+  Future<void> delete(String key) async {
+    _map.remove(key);
+  }
+
+  @override
+  dynamic read(String key) {
+    return _map[key];
+  }
+
+  @override
+  Future<void> write(String key, dynamic value) async {
+    _map[key] = value;
+  }
+}
